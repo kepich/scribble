@@ -2,11 +2,11 @@ package com.backend.scribble.game;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Event {
+public class GameEvent {
 
     public String eventType;
 
-    public Event(
+    public GameEvent(
             @JsonProperty("eventType") String eventType
     ) {
         this.eventType = eventType;

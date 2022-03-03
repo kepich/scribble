@@ -1,6 +1,5 @@
-package com.backend.scribble.socket;
+package com.backend.scribble.game;
 
-import com.backend.scribble.game.Event;
 import com.backend.scribble.room.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -17,12 +16,12 @@ public class GameController {
     private RoomService roomService;
 
     @MessageMapping("/game/{room}")
-    public void sendMessage(@DestinationVariable String room, Event event) {
-        System.out.println("Recieve event: " + event.toString() + ", room: " + room);
+    public void sendMessage(@DestinationVariable String room, GameEvent gameEvent) {
+        System.out.println("Recieve event: " + gameEvent.toString() + ", room: " + room);
 
         if (roomService.isRoomExists(room)) {
             // Routine...
-            simpMessagingTemplate.convertAndSend("/topic/messages/" + room, event);
+            simpMessagingTemplate.convertAndSend("/topic/messages/" + room, gameEvent);
         }
 
     }

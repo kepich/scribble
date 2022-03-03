@@ -1,6 +1,19 @@
 const url = 'http://localhost:8080';
 let stompClient;
-let newMessages = new Map();
+let newMessages = new Array();
+
+function redrawChat() {
+    const elements = document.getElementsByClassName("messagesConsole");
+    while (elements.length > 0) elements[0].remove();
+
+    const messagesList = document.getElementById("messagesList");
+    newMessages.forEach(element => {
+        var tag = document.createElement("p");
+        tag.classList.add("messagesConsole");
+        tag.innerText = JSON.stringify(element);
+        messagesList.appendChild(tag);
+    });
+}
 
 function connectToChat() {
     console.log("connecting to chat...")
@@ -10,6 +23,8 @@ function connectToChat() {
     stompClient.connect({}, function (frame) {
         console.log("connected to: " + frame);
         stompClient.subscribe("/topic/messages/" + selectedRoom, function (response) {
+            newMessages.push(JSON.parse(response.body));
+            redrawChat();
             console.log(JSON.parse(response.body));
         });
     });
