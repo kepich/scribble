@@ -1,29 +1,26 @@
 package com.backend.scribble.game;
 
+import com.backend.scribble.player.Player;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class GameEvent {
 
     public String eventType;
+    public Player player;
 
     public GameEvent(
-            @JsonProperty("eventType") String eventType
+            @JsonProperty("eventType") String eventType,
+            @JsonProperty("player") Player player
     ) {
         this.eventType = eventType;
-    }
-
-    public String getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
+        this.player = player;
     }
 
     @Override
     public String toString() {
-        return "Event{" +
+        return "GameEvent{" +
                 "eventType='" + eventType + '\'' +
+                ", player=" + player +
                 '}';
     }
 }

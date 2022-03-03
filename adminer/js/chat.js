@@ -2,13 +2,15 @@ const url = 'http://localhost:8080';
 let stompClient;
 let newMessages = new Array();
 
+let owner;
+
 function redrawChat() {
     const elements = document.getElementsByClassName("messagesConsole");
     while (elements.length > 0) elements[0].remove();
 
     const messagesList = document.getElementById("messagesList");
     newMessages.forEach(element => {
-        var tag = document.createElement("p");
+        var tag = document.createElement("div");
         tag.classList.add("messagesConsole");
         tag.innerText = JSON.stringify(element);
         messagesList.appendChild(tag);
@@ -33,8 +35,12 @@ function connectToChat() {
 function sendMsg() {
     let selectedRoom = document.getElementById("roomId").value;
     let message = document.getElementById("message").value;
+
+    console.log("Send message: ", message, ", ", owner);
+
     stompClient.send("/app/game/" + selectedRoom, {}, JSON.stringify({
-        eventType: message
+        eventType: message,
+        player: owner
     }));
 }
 
@@ -49,6 +55,7 @@ function connectToTheRoom() {
       dataType:"json",
       success: function(response){
         console.log("Response: ", response);
+        owner = response.player;
         connectToChat();
       }
     })
@@ -63,63 +70,12 @@ function createRoom() {
       contentType:"application/json; charset=utf-8",
       dataType:"json",
       success: function(response){
-        document.getElementById("roomId").value = response.roomId;
-        console.log("Response: ", response);
+        document.getElementById("roomId").value = response.room.roomId;
+        console.log("Response: ", response.player);
+
+        owner = response.player;
 
         connectToTheRoom();
       }
     })
-}
-
-
-
-function connectToSocket() {
-    connectToChat();
-}
-
-function selectUser(userName) {
-    console.log("selecting users: " + userName);
-    selectedRoom = userName;
-    let isNew = document.getElementById("newMessage_" + userName) !== null;
-    if (isNew) {
-        let element = document.getElementById("newMessage_" + userName);
-        element.parentNode.removeChild(element);
-        render(newMessages.get(userName), userName);
-    }
-    $('#selectedRoomId').html('');
-    $('#selectedRoomId').append(userName);
-}
-
-function selectUserManual() {
-    selectUser(document.getElementById("roomId").value);
-}
-
-function registration() {
-    let userName = document.getElementById("userName").value;
-    $.get(url + "/room/create/" + userName, function (response) {
-        console.log("Response: ", response);
-        connectToChat(response.roomId);
-    }).fail(function (error) {
-        if (error.status === 400) {
-            alert("Login is already busy!")
-        }
-    })
-}
-
-function fetchAll() {
-    $.get(url + "/player/fetch-all", function (response) {
-        let users = response;
-        let usersTemplateHTML = "";
-        for (let i = 0; i < users.length; i++) {
-            usersTemplateHTML = usersTemplateHTML + '<a href="#" onclick="selectUser(\'' + users[i] + '\')"><li class="clearfix">\n' +
-                '                <div class="about">\n' +
-                '                    <div id="userNameAppender_' + users[i] + '" class="name">' + users[i] + '</div>\n' +
-                '                    <div class="status">\n' +
-                '                        <i class="fa fa-circle offline"></i>\n' +
-                '                    </div>\n' +
-                '                </div>\n' +
-                '            </li></a>';
-        }
-        $('#usersList').html(usersTemplateHTML);
-    });
 }

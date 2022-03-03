@@ -14,14 +14,21 @@
     <script src="/scribble/adminer/js/chat.js"></script>
 </head>
 <body>
-<div class="container clearfix">
-    <input type="text" id="name" placeholder="name">
-    <button onclick="createRoom()">Create room</button>
-    <input type="text" id="roomId" placeholder="roomId">
-    <button onclick="connectToTheRoom()">Connect</button>
-    <button onclick="connectToSocket()">Connect to socket</button>
-    <input type="text" id="message" placeholder="message">
-    <button onclick="sendMsg()">Send</button>
+<div class="container clearfix buttons">
+    <div class="apiFunction">
+        <input type="text" id="name" placeholder="name">
+        <button onclick="createRoom()">Create room</button>
+    </div>
+
+    <div class="apiFunction">
+        <input type="text" id="roomId" placeholder="roomId">
+        <button onclick="connectToTheRoom()">Connect</button>
+    </div>
+
+    <div class="apiFunction">
+        <input type="text" id="message" placeholder="message">
+        <button onclick="sendMsg()">Send</button>
+    </div>
 </div>
 <div id="messagesList"></div>
 

@@ -1,4 +1,15 @@
 .messagesConsole {
     display: flex;
     flex-direction: column;
+    color: green;
+    background-color: black;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+.apiFunction {
+    margin: 10px;
 }

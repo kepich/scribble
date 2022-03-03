@@ -14,21 +14,17 @@ import java.util.TreeMap;
 public class RoomService {
     private final TreeMap<String, Room> rooms = new TreeMap<>();
 
-    @Autowired
-    private PlayerService playerService;
 
-    public Room createRoom(PlayerDto playerDto) {
-        Player newPlayer = playerService.createPlayer(playerDto.name);
-        Room newRoom = new Room(String.valueOf(rooms.size()), newPlayer);
-        newRoom.getPlayers().add(newPlayer);
+    public Room createRoom(Player player) {
+        Room newRoom = new Room(String.valueOf(rooms.size()), player);
+        newRoom.getPlayers().add(player);
         rooms.put(newRoom.getRoomId(), newRoom);
         return newRoom;
     }
 
-    public Room connectToRoom(RoomConnectDto roomConnectDto) {
-        Player newPlayer = playerService.createPlayer(roomConnectDto.player.name);
-        Room room = rooms.get(roomConnectDto.roomId);
-        room.getPlayers().add(newPlayer);
+    public Room connectToRoom(Player player, String roomId) {
+        Room room = rooms.get(roomId);
+        room.getPlayers().add(player);
         return room;
     }
 
