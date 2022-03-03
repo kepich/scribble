@@ -1,0 +1,4 @@
+.messagesConsole {
+    display: flex;
+    flex-direction: column;
+}

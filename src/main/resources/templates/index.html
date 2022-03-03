@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Custom messanger</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+    <!--    libs for stomp and sockjs-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <!--    end libs for stomp and sockjs-->
+    <script type="text/javascript" th:src="@{/js/chat.js}"></script>
+</head>
+<body>
+<div class="container clearfix">
+    <input type="text" id="name" placeholder="name">
+    <button onclick="createRoom()">Create room</button>
+    <input type="text" id="roomId" placeholder="roomId">
+    <button onclick="connectToTheRoom()">Connect</button>
+    <button onclick="connectToSocket()">Connect to socket</button>
+    <input type="text" id="message" placeholder="message">
+    <button onclick="sendMsg()">Send</button>
+</div>
+<div id="messagesList">
+    <a class="messagesConsole">Test msg1</a>
+    <a class="messagesConsole">Test msg2</a>
+</div>
+
+</body>
+</html>
