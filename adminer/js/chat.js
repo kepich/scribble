@@ -4,30 +4,40 @@ let newMessages = new Array();
 
 let owner;
 
+function createChatTdWithText(text) {
+    var tag = document.createElement("td");
+    tag.classList.add("chatTd");
+    tag.innerText = text;
+
+    return tag;
+}
+
 function redrawChat() {
-    const elements = document.getElementsByClassName("messagesConsole");
+    const elements = document.getElementsByClassName("chatRow");
     while (elements.length > 0) elements[0].remove();
 
     const messagesList = document.getElementById("messagesList");
+    var i = 1;
     newMessages.forEach(element => {
-        var tag = document.createElement("div");
-        tag.classList.add("messagesConsole");
-        tag.innerText = JSON.stringify(element);
-        messagesList.appendChild(tag);
+        var tr = document.createElement("tr");
+        tr.classList.add("chatRow");
+        tr.appendChild(createChatTdWithText(i + ")\t\t" + JSON.stringify(element)));
+        i = i + 1;
+        messagesList.appendChild(tr);
     });
 }
 
 function connectToChat() {
-    console.log("connecting to chat...")
     let selectedRoom = document.getElementById("roomId").value;
     let socket = new SockJS(url + '/game');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log("connected to: " + frame);
+        document.getElementById("roomId").style.border = "4px solid green";
+        document.getElementById("isConnected").style.display = "inline-flex";
         stompClient.subscribe("/topic/messages/" + selectedRoom, function (response) {
             newMessages.push(JSON.parse(response.body));
             redrawChat();
-            console.log(JSON.parse(response.body));
         });
     });
 }

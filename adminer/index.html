@@ -23,6 +23,7 @@
     <div class="apiFunction">
         <input type="text" id="roomId" placeholder="roomId">
         <button onclick="connectToTheRoom()">Connect</button>
+        <div id="isConnected" style="display: none">...Connected...</div>
     </div>
 
     <div class="apiFunction">
@@ -30,7 +31,9 @@
         <button onclick="sendMsg()">Send</button>
     </div>
 </div>
-<div id="messagesList"></div>
+<div id="messagesListDiv">
+    <table id="messagesList"></table>
+</div>
 
 </body>
 </html>
