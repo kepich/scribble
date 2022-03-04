@@ -1,6 +1,8 @@
 const url = 'http://localhost:8080';
 let stompClient;
 let newMessages = new Array();
+let rooms = new Array();
+selectedRoom = "";
 
 let owner;
 
@@ -10,6 +12,40 @@ function createChatTdWithText(text) {
     tag.innerText = text;
 
     return tag;
+}
+
+function createRoomTdWithText(text) {
+    var tag = document.createElement("td");
+    tag.classList.add("roomTd");
+
+    if (selectedRoom === text) {
+        tag.classList.add("selectedRoom");
+    }
+
+    tag.innerText = text;
+
+    return tag;
+}
+
+function getRoomList() {
+    const elements = document.getElementsByClassName("roomRow");
+    while (elements.length > 0) elements[0].remove();
+
+    $.ajax({
+      url: url + "/debug/all-rooms/",
+      type: "GET",
+      success: function(response){
+        console.log("getRoomList");
+        const messagesList = document.getElementById("roomListTable");
+        rooms = response;
+        rooms.forEach(element => {
+            var tr = document.createElement("tr");
+            tr.classList.add("roomRow");
+            tr.appendChild(createRoomTdWithText(element.roomId));
+            messagesList.appendChild(tr);
+        });
+      }
+    })
 }
 
 function redrawChat() {
@@ -25,6 +61,7 @@ function redrawChat() {
         i = i + 1;
         messagesList.appendChild(tr);
     });
+    getRoomList();
 }
 
 function connectToChat() {
@@ -35,6 +72,8 @@ function connectToChat() {
         console.log("connected to: " + frame);
         document.getElementById("roomId").style.border = "4px solid green";
         document.getElementById("isConnected").style.display = "inline-flex";
+        newMessages = Array();
+        redrawChat();
         stompClient.subscribe("/topic/messages/" + selectedRoom, function (response) {
             newMessages.push(JSON.parse(response.body));
             redrawChat();
@@ -43,7 +82,7 @@ function connectToChat() {
 }
 
 function sendMsg() {
-    let selectedRoom = document.getElementById("roomId").value;
+    selectedRoom = document.getElementById("roomId").value;
     let message = document.getElementById("message").value;
 
     console.log("Send message: ", message, ", ", owner);
@@ -55,7 +94,7 @@ function sendMsg() {
 }
 
 function connectToTheRoom() {
-    let selectedRoom = document.getElementById("roomId").value;
+    selectedRoom = document.getElementById("roomId").value;
     let userName = document.getElementById("name").value;
     $.ajax({
       url: url + "/room/connect/",

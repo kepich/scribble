@@ -28,6 +28,9 @@
     vertical-align: top;
 }
 
+.roomRow {
+    vertical-align: top;
+}
 
 #messagesList {
     background-color: black;
@@ -39,15 +42,33 @@
     flex-direction: column;
 }
 
-#messagesList-test {
-    background-color: black;
-    color: green;
-    margin: 10px;
-    min-height: 400px;
-    padding: 10px;
-}
-
 .chatTd {
     color: green;
     vertical-align: top;
+}
+
+#roomList {
+    min-width: 25%;
+    background-color: #1d4cb3;
+    margin: 10px;
+    padding: 10px;
+}
+
+#roomListTable {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.roomRow {
+    color: white;
+    vertical-align: top;
+}
+
+.selectedRoom{
+    background-color: black;
+}
+
+.myInput {
+    width: 400px;
 }

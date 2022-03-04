@@ -16,23 +16,36 @@
 <body>
 <div class="container clearfix buttons">
     <div class="apiFunction">
-        <input type="text" id="name" placeholder="name">
+        <div>nickname</div>
+        <input class="myInput" type="text" id="name" placeholder="name">
         <button onclick="createRoom()">Create room</button>
     </div>
 
     <div class="apiFunction">
-        <input type="text" id="roomId" placeholder="roomId">
+        <div>roomId</div>
+        <input class="myInput" type="text" id="roomId" placeholder="roomId">
         <button onclick="connectToTheRoom()">Connect</button>
         <div id="isConnected" style="display: none">...Connected...</div>
     </div>
 
     <div class="apiFunction">
-        <input type="text" id="message" placeholder="message">
+        <div>message</div>
+        <input class="myInput" type="text" id="message" placeholder="message">
         <button onclick="sendMsg()">Send</button>
     </div>
 </div>
-<div id="messagesListDiv">
-    <table id="messagesList"></table>
+<div style="display: flex">
+    <div id="messagesListDiv" style="min-width: 70%">
+        <div style="background-color: white; color: black">Messages</div>
+        <table id="messagesList"></table>
+    </div>
+    <div id="roomList">
+        <div style="background-color: white; color: black">
+            Rooms
+            <button onclick="getRoomList()">Get rooms</button>
+        </div>
+        <table id="roomListTable"></table>
+    </div>
 </div>
 
 </body>
