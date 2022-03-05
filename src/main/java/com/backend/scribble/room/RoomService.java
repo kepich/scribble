@@ -3,6 +3,7 @@ package com.backend.scribble.room;
 import com.backend.scribble.player.Player;
 import com.backend.scribble.player.PlayerDto;
 import com.backend.scribble.player.PlayerService;
+import com.backend.scribble.room.settings.RoomSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class RoomService {
 
     @Autowired
     private PlayerService playerService;
+
+    @Autowired
+    private RoomSettingsService roomSettingsService;
 
     public RoomConnectResponseDto createRoomAndConnect(PlayerDto playerDto) {
         Player newPlayer = playerService.createPlayer(playerDto.name);
@@ -37,7 +41,7 @@ public class RoomService {
     }
 
     private Room createRoomForPlayer(Player player) {
-        Room newRoom = new Room(UUID.randomUUID().toString(), player);
+        Room newRoom = new Room(UUID.randomUUID().toString(), player, roomSettingsService.getDefaultRoomSettings());
         newRoom.getPlayers().add(player);
         rooms.put(newRoom.getRoomId(), newRoom);
         return newRoom;

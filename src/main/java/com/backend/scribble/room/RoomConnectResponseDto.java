@@ -4,11 +4,19 @@ import com.backend.scribble.player.Player;
 
 public class RoomConnectResponseDto {
 
+    public Player player;
+    public Room room;
+
     public RoomConnectResponseDto(Player player, Room room) {
         this.player = player;
         this.room = room;
     }
 
-    public Player player;
-    public Room room;
+    @Override
+    public String toString() {
+        return "RoomConnectResponseDto{" +
+                "player=" + player +
+                ", room=" + room +
+                '}';
+    }
 }

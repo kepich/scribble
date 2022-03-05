@@ -23,6 +23,5 @@ public class GameController {
             // Routine...
             simpMessagingTemplate.convertAndSend("/topic/messages/" + room, gameEvent);
         }
-
     }
 }
