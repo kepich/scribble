@@ -5,6 +5,8 @@ let rooms = new Array();
 selectedRoom = "";
 
 let owner;
+let room;
+let api;
 
 function createChatTdWithText(text) {
     var tag = document.createElement("td");
@@ -41,7 +43,7 @@ function getRoomList() {
         rooms.forEach(element => {
             var tr = document.createElement("tr");
             tr.classList.add("roomRow");
-            tr.appendChild(createRoomTdWithText(element.roomId));
+            tr.appendChild(createRoomTdWithText(element.id));
             messagesList.appendChild(tr);
         });
       }
@@ -68,28 +70,43 @@ function connectToChat() {
     let selectedRoom = document.getElementById("roomId").value;
     let socket = new SockJS(url + '/game');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+
+    // Хедеры для сессии, по которым я смогу отслеживать подключение человечка к комнате и его отключение
+    stompClient.connect({roomId: room.id, playerId: owner.id}, function (frame) {
         console.log("connected to: " + frame);
         document.getElementById("roomId").style.border = "4px solid green";
         document.getElementById("isConnected").style.display = "inline-flex";
         newMessages = Array();
         redrawChat();
-        stompClient.subscribe("/topic/messages/" + selectedRoom, function (response) {
+
+// Подписки на события
+        stompClient.subscribe(api.subscribes.CONNECT + selectedRoom, function (response) {
+            newMessages.push(JSON.parse(response.body));
+            redrawChat();
+        });
+
+        stompClient.subscribe(api.subscribes.DISCONNECT + selectedRoom, function (response) {
+            newMessages.push("DISCONNECT: " + response.body);
+            redrawChat();
+        });
+
+        stompClient.subscribe(api.subscribes.SETTINGS + selectedRoom, function (response) {
             newMessages.push(JSON.parse(response.body));
             redrawChat();
         });
     });
 }
 
-function sendMsg() {
+// Отправка события изменения настроек комнаты
+function sendMsgConfig() {
     selectedRoom = document.getElementById("roomId").value;
-    let message = document.getElementById("message").value;
+    let message = document.getElementById("messageConfig").value;
 
-    console.log("Send message: ", message, ", ", owner);
-
-    stompClient.send("/app/game/" + selectedRoom, {}, JSON.stringify({
-        eventType: message,
-        player: owner
+    stompClient.send(api.producers.SETTINGS + selectedRoom, {}, JSON.stringify({
+        roundNumber: 1,
+        drawTime: 30,
+        words: [message],
+        customWordsExcl: false
     }));
 }
 
@@ -105,6 +122,9 @@ function connectToTheRoom() {
       success: function(response){
         console.log("Response: ", response);
         owner = response.player;
+        room = response.room;
+        api = response.api;
+        document.getElementById("roomSettings").innerText = JSON.stringify(room.settings);
         connectToChat();
       }
     })
@@ -119,12 +139,16 @@ function createRoom() {
       contentType:"application/json; charset=utf-8",
       dataType:"json",
       success: function(response){
-        document.getElementById("roomId").value = response.room.roomId;
-        console.log("Response: ", response.player);
+        document.getElementById("roomId").value = response.room.id;
+        console.log("Response: ", response);
 
         owner = response.player;
+        room = response.room;
+        api = response.api;
+        selectedRoom = response.room.id;
 
-        connectToTheRoom();
+        document.getElementById("roomSettings").innerText = JSON.stringify(room.settings);
+        connectToChat();
       }
     })
 }

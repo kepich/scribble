@@ -1,4 +1,4 @@
-package com.backend.scribble.player;
+package com.backend.scribble.model.player;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

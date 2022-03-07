@@ -1,5 +1,6 @@
-package com.backend.scribble.player;
+package com.backend.scribble.service;
 
+import com.backend.scribble.model.player.Player;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

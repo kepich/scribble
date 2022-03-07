@@ -1,8 +1,8 @@
-package com.backend.scribble.debug;
+package com.backend.scribble.config.debug;
 
-import com.backend.scribble.player.Player;
-import com.backend.scribble.room.Room;
-import com.backend.scribble.room.RoomService;
+import com.backend.scribble.model.player.Player;
+import com.backend.scribble.model.room.Room;
+import com.backend.scribble.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +23,7 @@ public class DebugController {
 
     @GetMapping("all-players")
     public List<Player> getAllPlayers() {
-        return roomService.getAllRooms().stream()
-                .map(Room::getPlayers)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return roomService.getAllPlayers();
     }
 
     @GetMapping("all-rooms")

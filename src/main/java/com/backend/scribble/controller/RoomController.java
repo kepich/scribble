@@ -1,6 +1,11 @@
-package com.backend.scribble.room;
+package com.backend.scribble.controller;
 
-import com.backend.scribble.player.PlayerDto;
+import com.backend.scribble.event.EventType;
+import com.backend.scribble.model.player.PlayerDto;
+import com.backend.scribble.model.room.RoomConnectDto;
+import com.backend.scribble.model.room.RoomConnectResponseDto;
+import com.backend.scribble.service.RoomService;
+import com.backend.scribble.service.SocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +18,9 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    @Autowired
+    private SocketService socketService;
+
     @PostMapping("/create")
     public RoomConnectResponseDto createRoom(@RequestBody PlayerDto playerDto) {
         return roomService.createRoomAndConnect(playerDto);
@@ -20,6 +28,8 @@ public class RoomController {
 
     @PostMapping("/connect")
     public RoomConnectResponseDto connectToRoom(@RequestBody RoomConnectDto roomConnectDto) {
-        return roomService.connectToTheRoom(roomConnectDto);
+        RoomConnectResponseDto response = roomService.connectToTheRoom(roomConnectDto);
+        socketService.send(EventType.CONNECT, response.room.getId(), response.player);
+        return response;
     }
 }

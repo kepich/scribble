@@ -29,10 +29,14 @@
     </div>
 
     <div class="apiFunction">
-        <div>message</div>
-        <input class="myInput" type="text" id="message" placeholder="message">
-        <button onclick="sendMsg()">Send</button>
+        <div>Send RoomSettings</div>
+        <input class="myInput" type="text" id="messageConfig" placeholder="message">
+        <button onclick="sendMsgConfig()">Send</button>
     </div>
+</div>
+<div style="display: flex">
+    <div>Room settigs: </div>
+    <div id="roomSettings"></div>
 </div>
 <div style="display: flex">
     <div id="messagesListDiv" style="min-width: 70%">
