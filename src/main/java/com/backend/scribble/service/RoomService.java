@@ -45,7 +45,7 @@ public class RoomService {
     }
 
     private Room createRoomForPlayer(Player player) {
-        Room newRoom = new Room(UUID.randomUUID().toString(), player, roomSettingsService.getDefaultRoomSettings());
+        Room newRoom = new Room(UUID.randomUUID().toString(), player.getId(), roomSettingsService.getDefaultRoomSettings());
         newRoom.getPlayers().add(player);
         rooms.put(newRoom.getId(), newRoom);
         return newRoom;

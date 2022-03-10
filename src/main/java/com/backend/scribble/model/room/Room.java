@@ -7,11 +7,11 @@ import java.util.ArrayList;
 
 public class Room {
     private final String id;
-    private final Player owner;
+    private final String owner;
     private final ArrayList<Player> players;
     private RoomSettings settings;
 
-    public Room(String id, Player owner, RoomSettings settings) {
+    public Room(String id, String owner, RoomSettings settings) {
         this.id = id;
         this.owner = owner;
         this.players = new ArrayList<>();
@@ -22,7 +22,7 @@ public class Room {
         return id;
     }
 
-    public Player getOwner() {
+    public String getOwner() {
         return owner;
     }
 
