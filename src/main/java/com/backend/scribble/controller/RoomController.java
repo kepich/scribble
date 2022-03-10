@@ -1,6 +1,5 @@
 package com.backend.scribble.controller;
 
-import com.backend.scribble.event.EventType;
 import com.backend.scribble.model.player.PlayerDto;
 import com.backend.scribble.model.room.RoomConnectDto;
 import com.backend.scribble.model.room.RoomConnectResponseDto;
@@ -27,9 +26,9 @@ public class RoomController {
     }
 
     @PostMapping("/connect")
-    public RoomConnectResponseDto connectToRoom(@RequestBody RoomConnectDto roomConnectDto) {
+    public RoomConnectResponseDto connectToRoom(@RequestBody RoomConnectDto roomConnectDto) throws Exception {
         RoomConnectResponseDto response = roomService.connectToTheRoom(roomConnectDto);
-        socketService.send(EventType.CONNECT, response.room.getId(), response.player);
+        socketService.sendConnect(response.room.getId(), response.player);
         return response;
     }
 }

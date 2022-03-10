@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Room {
     private final String id;
-    private final String owner;
+    private String owner;
     private final ArrayList<Player> players;
     private RoomSettings settings;
 
@@ -36,6 +36,10 @@ public class Room {
 
     public void setSettings(RoomSettings settings) {
         this.settings = settings;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     @Override

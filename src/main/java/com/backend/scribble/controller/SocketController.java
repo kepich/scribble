@@ -1,6 +1,5 @@
 package com.backend.scribble.controller;
 
-import com.backend.scribble.event.EventType;
 import com.backend.scribble.service.RoomService;
 import com.backend.scribble.model.roomSettings.RoomSettings;
 import com.backend.scribble.service.SocketService;
@@ -24,7 +23,18 @@ public class SocketController {
         System.out.println("Recieve settings: " + roomSettings.toString() + ", room: " + room);
         try {
             roomService.setRoomSettings(room, roomSettings);
-            socketService.send(EventType.SETTINGS, room, roomSettings);
+            socketService.sendSettings(room, roomSettings);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @MessageMapping("/start-game/{room}")
+    public void startGame(@DestinationVariable String room) {
+        System.out.println("Start game" + ", room: " + room);
+        try {
+            roomService.startGame(room);
+            socketService.sendStartGame(room);
         } catch (Exception e) {
             e.printStackTrace();
         }

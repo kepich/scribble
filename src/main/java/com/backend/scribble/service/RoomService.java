@@ -7,6 +7,10 @@ import com.backend.scribble.model.room.Room;
 import com.backend.scribble.model.room.RoomConnectDto;
 import com.backend.scribble.model.room.RoomConnectResponseDto;
 import com.backend.scribble.model.roomSettings.RoomSettings;
+import com.backend.scribble.service.PlayerService;
+import com.backend.scribble.service.RoomSettingsService;
+import com.backend.scribble.service.SocketService;
+import com.backend.scribble.service.storage.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class RoomService {
-    private final TreeMap<String, Room> rooms = new TreeMap<>();
+    @Autowired
+    private RoomRepository roomRepository;
 
     @Autowired
     private PlayerService playerService;
@@ -35,7 +40,7 @@ public class RoomService {
         return new RoomConnectResponseDto(newPlayer, room);
     }
 
-    public RoomConnectResponseDto connectToTheRoom(RoomConnectDto roomConnectDto) {
+    public RoomConnectResponseDto connectToTheRoom(RoomConnectDto roomConnectDto) throws Exception {
         Player newPlayer = playerService.createPlayer(roomConnectDto.player.name);
         Room room = connectToRoom(newPlayer, roomConnectDto.roomId);
 
@@ -47,18 +52,18 @@ public class RoomService {
     private Room createRoomForPlayer(Player player) {
         Room newRoom = new Room(UUID.randomUUID().toString(), player.getId(), roomSettingsService.getDefaultRoomSettings());
         newRoom.getPlayers().add(player);
-        rooms.put(newRoom.getId(), newRoom);
+        roomRepository.addRoom(newRoom);
         return newRoom;
     }
 
-    private Room connectToRoom(Player player, String roomId) {
-        Room room = rooms.get(roomId);
+    private Room connectToRoom(Player player, String roomId) throws Exception {
+        Room room = roomRepository.getById(roomId).orElseThrow(() -> new Exception("Room with id=" + roomId + " not found"));
         room.getPlayers().add(player);
         return room;
     }
 
     public List<Room> getAllRooms() {
-        return new ArrayList<>(rooms.values());
+        return roomRepository.getAll();
     }
 
     public void setRoomSettings(String room, RoomSettings roomSettings) throws Exception {
@@ -68,7 +73,7 @@ public class RoomService {
     }
 
     private Optional<Room> getRoomOptional(String room) {
-        return Optional.ofNullable(rooms.getOrDefault(room, null));
+        return roomRepository.getById(room);
     }
 
     public Room getRoomById(String room) throws Exception {
@@ -84,14 +89,33 @@ public class RoomService {
     }
 
     public void disconnectPlayerBySession(String sessionId) {
-        Optional<Player> playerOp;
-        for(Map.Entry<String, Room> room: rooms.entrySet()) {
-            playerOp = room.getValue().getPlayers().stream().filter(p -> p.getSessionId().equals(sessionId)).findFirst();
-            if (playerOp.isPresent()) {
-                room.getValue().getPlayers().remove(playerOp.get());
-                socketService.send(EventType.DISCONNECT, room.getValue().getId(), playerOp.get().getId());
-                return;
-            }
+        roomRepository.getByPlayerSessionId(sessionId).ifPresent(room ->
+            room.getPlayers().stream()
+                    .filter(player -> sessionId.equals(player.getSessionId()))
+                    .findFirst()
+                    .ifPresent(player -> {
+                        removePlayerFromRoom(player, room);
+                        socketService.sendDisconnect(room.getId(), player.getId());
+                    }
+        ));
+    }
+
+    public void startGame(String roomId) {
+        roomRepository.getById(roomId).ifPresent(room -> roomRepository.startGame(room));
+    }
+
+    private void removePlayerFromRoom(Player player, Room room) {
+        room.getPlayers().remove(player);
+
+        if (room.getPlayers().isEmpty()) {
+            roomRepository.deleteById(room.getId());
+        } else {
+            updateAdmin(room);
         }
+    }
+
+    private void updateAdmin(Room room) {
+        room.setOwner(room.getPlayers().get(0).getId());
+        socketService.sendUpdateRoom(room);
     }
 }

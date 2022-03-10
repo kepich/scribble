@@ -13,7 +13,8 @@ public class API {
     ));
 
     public final Map<EventType, String> producers = List.of(
-            EventType.SETTINGS
+            EventType.SETTINGS,
+            EventType.START_GAME
         ).stream().collect(Collectors.toMap((eventType -> eventType), (EventType::getProducerName)
     ));
 }

@@ -3,7 +3,10 @@ package com.backend.scribble.event;
 public enum EventType {
     SETTINGS("settings"),
     CONNECT("connect"),
-    DISCONNECT("disconnect");
+    DISCONNECT("disconnect"),
+    START_GAME("start-game"),
+    UPDATE_ROOM("update-room"),
+    ;
 
     public final String topicName;
     EventType(String topicName) {
